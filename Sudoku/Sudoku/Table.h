@@ -1,6 +1,7 @@
 #pragma once
 #include"SdkBuffer.h"
 #include "FileHandler.h"
+extern const unsigned int BufferSize;
 class Table
 {
 private:
@@ -31,7 +32,7 @@ public:
 	   @Modifies:sdb
 	   Generate sudoku solution and write to a file.
 	*/
-	void Generate(int total, FileHandler* fh);
+	void Generate(unsigned int total, FileHandler* fh);
 
 	/*@Requires:sdb!=nulls
 	@Effects:/result==true <==> We can find at least one solution
@@ -49,7 +50,7 @@ public:
 	@Modifies:sdb
 	Generate sudoku solution to the sdb
 	*/
-	void Generate(int total, SdkBuffer* sdb);
+	void Generate(unsigned int total, SdkBuffer* sdb);
 
 	/*@Requires:src!=null,dst!=null
 	@Modifies:src,dst

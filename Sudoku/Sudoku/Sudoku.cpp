@@ -7,12 +7,14 @@
 #include "InputHandler.h"
 #include "SdkBuffer.h"
 #include "Table.h"
+#include <time.h>
 using namespace std;
 typedef ArgumentHandler::State state;
-const int BufferSize = 10000;    
+const unsigned  int BufferSize = 10000;    
 const int MaxCounts = 100000;
 int main(int argc,char**args)
 {
+	clock_t start = clock();
 	ArgumentHandler* ah = new ArgumentHandler();
 	ah->ParseInput(argc,args);
 	state st = ah->GetState();
@@ -28,7 +30,7 @@ int main(int argc,char**args)
 	if (st == state::GEN)
 	{
 		do {
-			int count = ah->GetCount();
+			unsigned int count = ah->GetCount();
 			if (count > MaxCounts)
 			{
 				cout << "Count is too big" << endl;
@@ -58,6 +60,8 @@ int main(int argc,char**args)
 	delete fh;
 	delete tb;
 	delete sdb;
-    return 0;
+	cout << "elapsed" << (float(clock()) - start) / 1000;
+	getchar();
+	return 0;
 }
 

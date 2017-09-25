@@ -2,14 +2,14 @@
 #include "Table.h"
 #include <vector>
 using namespace std;
-extern const  int BufferSize;
+extern const unsigned  int BufferSize;
 Table::Table()
 {
 	total = 0; //the number of soultion found by far
 	top = 0;  //the searching process will stop when 'total' reaches to 'top' 
 	SetZero();//set all elements to zero
 }
-void Table::Generate(int max, SdkBuffer* sdb)
+void Table::Generate(unsigned int max, SdkBuffer* sdb)
 {
 	//set some initial argument 
 	this->total = 0;
@@ -48,12 +48,12 @@ bool Table::Solve(SdkBuffer* sdb)
 	if (total == 1)return true;
 	else return false;
 }
-void Table::Generate(int total, FileHandler*fh)
+void Table::Generate(unsigned int total, FileHandler*fh)
 {
 	//allocate a new buffer 
 	SdkBuffer * sdb = new SdkBuffer(BufferSize);
 	//generate sudoku solution and write to the file
-	for (int i = 0; i < total; i += BufferSize)
+	for (unsigned int i = 0; i < total; i += BufferSize)
 	{
 		sdb->Clear();
 		if (total - i <= BufferSize)
@@ -79,7 +79,7 @@ void Table::Solve(FileHandler* src, FileHandler*dst)
 	SdkBuffer* sdbDst = new SdkBuffer(BufferSize);
 	while (src->HasNext())
 	{
-		src->WriteSdb(sdbSrc);
+		src->ReadSdb(sdbSrc);
 		Solve(sdbSrc, sdbDst);
 		dst->WriteSdb(sdbDst);
 	}
@@ -87,7 +87,7 @@ void Table::Solve(FileHandler* src, FileHandler*dst)
 
 int*  Table::lookUp(int rst, int  cst, int num)
 {
-	static int result[10];
+	 int *result=new int[10];
 	int index=0;
 	int ron=0,con=0;
 	for (int i = 0; i < 3; i++)
@@ -100,17 +100,24 @@ int*  Table::lookUp(int rst, int  cst, int num)
 			{
 				return NULL;
 			}
+			if (cells[ron][con] != 0)
+				continue;
 			bool pass=true;
 			for (int t = 0; t < 9; t++)
 			{
-				if (cells[ron][t] == num || cells[t][con] == num)pass = false;
+				if (cells[ron][t] == num || cells[t][con] == num)
+				{
+					pass = false;
+					break;
+				}
 			}
 			if (pass)
 			{
-				result[index++] = i * 9 + j;
+				result[index++] = ron*9+con;
 			}
 		}
 	}
+//	printf("%d", index);
 	result[index] = -1;
 	return result;
 }
@@ -122,6 +129,7 @@ void Table::solve(int subt, int num)
 	//num (1-9)  is the current  number we try to fiil in  
 	
 	
+ //	printf("%d %d\n", subt, num);
 	//if we get enough solutions ,just exit
 	if (total == top)
 		return;
@@ -148,21 +156,22 @@ void Table::solve(int subt, int num)
 		solve(subt + 1, num);
 		return;
 	}
-
 	int index = 0;
 	//Row or Column of Number
 	int ron = 0;
 	int con = 0;
-	while (suitcells[index] != -1)
+	while (suitcells[index] != -1 && total!=top)
 	{
 		ron = suitcells[index] / 9;
 		con = suitcells[index] % 9;
 		cells[ron][con] = num;
 		solve(subt + 1, num);
 		cells[ron][con] = 0;
+		index++;
 	}
+	delete[] suitcells;
 }
 Table::~Table()
 {
-	delete cells;
+
 }

@@ -27,15 +27,15 @@ ArgumentHandler::State ArgumentHandler::GetState()
 void ArgumentHandler::ParseInput(int argc,char** args)
 {
 	if (argc != 3) {
-		cout << "too much arguments" << endl;
+		cout << "The number of arguments is not correct" << endl;
 		return;
 	}
-	if (args[1] == "-c")
+	if (strcmp(args[1] , "-c")==0)
 	{
 		state = State::GEN;
 		sscanf_s(args[2], "%d", &count);
 	}
-	else if (args[1] == "-s")
+	else if (strcmp(args[1], "-s")==0)
 	{
 		state = State::SOV;
 		pathname = args[2];
@@ -43,3 +43,4 @@ void ArgumentHandler::ParseInput(int argc,char** args)
 
 
 }
+

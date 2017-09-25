@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "FileHandler.h"
-
+#include "SdkBuffer.h"
 
 FileHandler::FileHandler()
 {
@@ -30,7 +30,7 @@ void FileHandler::ReadSdb(SdkBuffer* sdb)
 			}
 			fgetc(file);
 		}
-		sdb->Fill(buffer);
+		bool r=sdb->Fill(buffer);
 		if (fgetc(file) == EOF)break;
 	}
 }
@@ -41,13 +41,10 @@ void FileHandler::WriteSdb(SdkBuffer* sdb)
 	for (; index < sdb->GetSize(); index++) {
 		for (int i = 0; i < 9; i++)
 		{
-			for (int j = 0; j < 9; j++)
-			{
-				fwrite(buffer + index * 81 + i * 9, 9, sizeof(char), file);
-			}
-			fscanf_s(file, "%c", "\n");
+			fwrite(buffer + index * 81 + i * 9, 9, sizeof(char), file);
+			fputc('\n',file);
 		}
-		fscanf_s(file, "%c", "\n");
+		fputc('\n', file);
 	}
 }
 void FileHandler::Close()
@@ -56,6 +53,10 @@ void FileHandler::Close()
 	{
 		fclose(file);
 	}
+}
+bool FileHandler::HasNext()
+{
+	return feof(file)==0;
 }
 FileHandler::~FileHandler()
 {

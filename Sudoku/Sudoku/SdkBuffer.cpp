@@ -22,9 +22,9 @@ bool SdkBuffer::Fill(int table[][9])
 			{
 				if (table[i][j] > 9 || table[i][j] < 0)return false;
 				buffer[81 * size + i * 9 + j] = '0' + table[i][j];
-				size += 1;
 			}
 		}
+		size += 1;
 		return true;
 	}
 	else
@@ -51,4 +51,12 @@ void SdkBuffer::Clear()
 const char* SdkBuffer::GetBuffer()
 {
 	return buffer;
+}
+unsigned int SdkBuffer::GetSize()
+{
+	return size;
+}
+unsigned int SdkBuffer::GetCapacity()
+{
+	return capacity;
 }
