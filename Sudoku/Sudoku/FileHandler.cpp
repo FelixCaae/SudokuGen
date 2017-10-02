@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "FileHandler.h"
 #include "SdkBuffer.h"
-
+#include<iostream>
+using namespace std;
 FileHandler::FileHandler()
 {
 	 
@@ -25,24 +26,35 @@ void FileHandler::ReadSdb(SdkBuffer* sdb)
 			for (int j = 0; j < 9; j++)
 			{
 				c = fgetc(file);
-				if (c == ' ')buffer[i][j] = 0;//FILE error proccess
-				else buffer[i][j] = c - '0';
+				fgetc(file);
+				buffer[i][j] = c - '0';
 			}
-			fgetc(file);
 		}
 		bool r=sdb->Fill(buffer);
+		if (!r)
+		{
+			cout <<"Puzzle file format error!"<< endl;
+			break;
+		}
 		if (fgetc(file) == EOF)break;
 	}
 }
 void FileHandler::WriteSdb(SdkBuffer* sdb)
 {
 	const char *buffer = sdb->GetBuffer();
+	char line[18];
 	unsigned int index = 0;
 	for (; index < sdb->GetSize(); index++) {
 		for (int i = 0; i < 9; i++)
 		{
-			fwrite(buffer + index * 81 + i * 9, 9, sizeof(char), file);
-			fputc('\n',file);
+			//fwrite(buffer + index * 81 + i * 9, 9, sizeof(char), file);
+			for (int j = 0; j < 9; j++)
+			{
+				line[j * 2] = buffer[index * 81 + i * 9 + j];
+				line[j * 2 + 1] = ' ';
+			}
+			line[17] = '\n';
+			fwrite(line, 18, sizeof(char), file);
 		}
 		fputc('\n', file);
 	}

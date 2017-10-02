@@ -4,17 +4,19 @@
 #include "stdafx.h"
 #include<iostream>
 #include "FileHandler.h"
-#include "InputHandler.h"
+#include "ArgumentHandler.h"
 #include "SdkBuffer.h"
 #include "Table.h"
 #include <time.h>
 using namespace std;
 typedef ArgumentHandler::State state;
 const unsigned  int BufferSize = 10000;    
-const int MaxCounts = 100000;
+const int MaxCounts = 1000000;
 int main(int argc,char**args)
 {
+#ifdef DEBUG
 	clock_t start = clock();
+#endif // DEBUG
 	ArgumentHandler* ah = new ArgumentHandler();
 	ah->ParseInput(argc,args);
 	state st = ah->GetState();
@@ -26,7 +28,6 @@ int main(int argc,char**args)
 	}
 	FileHandler *fh = new FileHandler();
 	Table *tb = new Table();
-	SdkBuffer *sdb = new SdkBuffer(BufferSize);
 	if (st == state::GEN)
 	{
 		do {
@@ -48,20 +49,27 @@ int main(int argc,char**args)
 	else
 	{
 		FileHandler* dst = new FileHandler();
-		dst->Open("sudoku.txt","w");
 		do {
-			fh->Open(ah->GetPathName(),"r");
-			tb->Solve(fh, dst);
-		} while (false);
+			if ( dst->Open("sudoku.txt", "w")  && fh->Open(ah->GetPathName(), "r")) 
+			{
+				tb->Solve(fh, dst);
+			}
+			else
+			{
+				cout << "Error happend when trying to read puzzle file"<<endl;
+			}
+		} 
+		while (false);
 		dst->Close();
 		delete dst;
 	}
 	fh->Close();
 	delete fh;
 	delete tb;
-	delete sdb;
+#ifdef  DEBUG
 	cout << "elapsed" << (float(clock()) - start) / 1000;
 	getchar();
+#endif //  DEBUG
 	return 0;
 }
 

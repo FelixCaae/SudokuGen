@@ -43,7 +43,7 @@ bool Table::Solve(SdkBuffer* sdb)
 	total = 0;
 	top = 1;
 	pCurrentBuffer = sdb;
-	solve(0, 1);
+	startSolving();
 	//total==1 means we found a solution
 	if (total == 1)return true;
 	else return false;
@@ -87,7 +87,7 @@ void Table::Solve(FileHandler* src, FileHandler*dst)
 
 int*  Table::lookUp(int rst, int  cst, int num)
 {
-	 int *result=new int[10];
+	int *result=new int[10];
 	int index=0;
 	int ron=0,con=0;
 	for (int i = 0; i < 3; i++)
@@ -120,6 +120,10 @@ int*  Table::lookUp(int rst, int  cst, int num)
 //	printf("%d", index);
 	result[index] = -1;
 	return result;
+}
+void Table::startSolving()
+{
+	solve(0, 1);
 }
 void Table::solve(int subt, int num)
 {
